@@ -28,6 +28,7 @@ const UploadExam = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -43,6 +44,11 @@ const UploadExam = () => {
 
   const handleSemesterChange = (semester) => {
     setSelectedSemester(semester);
+    setValue("semester", semester); // Update the form value
+  };
+
+  const handleCourseChange = (course) => {
+    setValue("course", course); // Update the form value
   };
 
   return (
@@ -50,7 +56,7 @@ const UploadExam = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label htmlFor="semester">Semester</Label>
-          <Select onValueChange={handleSemesterChange} {...register("semester")}>
+          <Select onValueChange={handleSemesterChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select semester" />
             </SelectTrigger>
@@ -64,7 +70,7 @@ const UploadExam = () => {
         </div>
         <div>
           <Label htmlFor="course">Course</Label>
-          <Select {...register("course")}>
+          <Select onValueChange={handleCourseChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select course" />
             </SelectTrigger>
