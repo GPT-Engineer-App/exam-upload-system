@@ -9,9 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const schema = z.object({
-  keyword: z.string().nonempty("Keyword is required"),
-  semester: z.string().nonempty("Semester is required"),
-  course: z.string().nonempty("Course is required"),
+  keyword: z.string().optional(),
+  semester: z.string().optional(),
+  course: z.string().optional(),
 });
 
 const coursesBySemester = {
@@ -32,13 +32,13 @@ const SearchExam = () => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
-    // Mock results for demonstration
-    setResults([
-      { id: 1, title: "Exam 1", course: data.course, semester: data.semester },
-      { id: 2, title: "Exam 2", course: data.course, semester: data.semester },
-    ]);
-  };
+  console.log(data);
+  // Mock results for demonstration
+  setResults([
+    { id: 1, title: "Exam 1", course: data.course || "N/A", semester: data.semester || "N/A" },
+    { id: 2, title: "Exam 2", course: data.course || "N/A", semester: data.semester || "N/A" },
+  ]);
+};
 
   const handleSemesterChange = (semester) => {
     setSelectedSemester(semester);
