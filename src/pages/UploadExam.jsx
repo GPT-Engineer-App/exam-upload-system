@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
-  year: z.string().nonempty("Year is required"),
+  semester: z.string().nonempty("Semester is required"),
   course: z.string().nonempty("Course is required"),
   file: z
     .instanceof(FileList)
@@ -17,14 +17,14 @@ const schema = z.object({
     .refine((files) => files[0]?.size <= 5 * 1024 * 1024, "Max file size is 5MB"),
 });
 
-const coursesByYear = {
+const coursesBySemester = {
   "112-1": ["Course 1", "Course 2"],
   "112-2": ["Course 3", "Course 4"],
   "113-1": ["Course 5", "Course 6"],
 };
 
 const UploadExam = () => {
-  const [selectedYear, setSelectedYear] = useState("");
+  const [selectedSemester, setSelectedSemester] = useState("");
   const {
     register,
     handleSubmit,
@@ -41,35 +41,18 @@ const UploadExam = () => {
     navigate("/");
   };
 
-  const handleYearChange = (year) => {
-    setSelectedYear(year);
+  const handleSemesterChange = (semester) => {
+    setSelectedSemester(semester);
   };
 
-return (
+  return (
     <div className="flex items-center justify-center h-screen">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <Label htmlFor="course">Course</Label>
-          <Select {...register("course")}>
+          <Label htmlFor="semester">Semester</Label>
+          <Select onValueChange={handleSemesterChange} {...register("semester")}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select course" />
-            </SelectTrigger>
-            <SelectContent>
-              {selectedYear &&
-                coursesByYear[selectedYear].map((course) => (
-                  <SelectItem key={course} value={course}>
-                    {course}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-          {errors.course && <p className="text-red-500">{errors.course.message}</p>}
-        </div>
-        <div>
-          <Label htmlFor="year">Year</Label>
-          <Select onValueChange={handleYearChange} {...register("year")}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select year" />
+              <SelectValue placeholder="Select semester" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="112-1">112-1</SelectItem>
@@ -77,7 +60,24 @@ return (
               <SelectItem value="113-1">113-1</SelectItem>
             </SelectContent>
           </Select>
-          {errors.year && <p className="text-red-500">{errors.year.message}</p>}
+          {errors.semester && <p className="text-red-500">{errors.semester.message}</p>}
+        </div>
+        <div>
+          <Label htmlFor="course">Course</Label>
+          <Select {...register("course")}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select course" />
+            </SelectTrigger>
+            <SelectContent>
+              {selectedSemester &&
+                coursesBySemester[selectedSemester].map((course) => (
+                  <SelectItem key={course} value={course}>
+                    {course}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+          {errors.course && <p className="text-red-500">{errors.course.message}</p>}
         </div>
         <div>
           <Label htmlFor="file">File</Label>
