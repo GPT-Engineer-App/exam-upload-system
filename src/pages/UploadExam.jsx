@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,15 +9,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
-  course: z.string().nonempty("Course is required"),
   year: z.string().nonempty("Year is required"),
+  course: z.string().nonempty("Course is required"),
   file: z
     .instanceof(FileList)
     .refine((files) => files.length > 0, "File is required")
     .refine((files) => files[0]?.size <= 5 * 1024 * 1024, "Max file size is 5MB"),
 });
 
+const coursesByYear = {
+  "112-1": ["Course 1", "Course 2"],
+  "112-2": ["Course 3", "Course 4"],
+  "113-1": ["Course 5", "Course 6"],
+};
+
 const UploadExam = () => {
+  const [selectedYear, setSelectedYear] = useState("");
   const {
     register,
     handleSubmit,
@@ -34,7 +41,11 @@ const UploadExam = () => {
     navigate("/");
   };
 
-  return (
+  const handleYearChange = (year) => {
+    setSelectedYear(year);
+  };
+
+return (
     <div className="flex items-center justify-center h-screen">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
@@ -44,23 +55,26 @@ const UploadExam = () => {
               <SelectValue placeholder="Select course" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="course1">Course 1</SelectItem>
-              <SelectItem value="course2">Course 2</SelectItem>
-              <SelectItem value="course3">Course 3</SelectItem>
+              {selectedYear &&
+                coursesByYear[selectedYear].map((course) => (
+                  <SelectItem key={course} value={course}>
+                    {course}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
           {errors.course && <p className="text-red-500">{errors.course.message}</p>}
         </div>
         <div>
           <Label htmlFor="year">Year</Label>
-          <Select {...register("year")}>
+          <Select onValueChange={handleYearChange} {...register("year")}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select year" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="2023">2023</SelectItem>
-              <SelectItem value="2022">2022</SelectItem>
-              <SelectItem value="2021">2021</SelectItem>
+              <SelectItem value="112-1">112-1</SelectItem>
+              <SelectItem value="112-2">112-2</SelectItem>
+              <SelectItem value="113-1">113-1</SelectItem>
             </SelectContent>
           </Select>
           {errors.year && <p className="text-red-500">{errors.year.message}</p>}
